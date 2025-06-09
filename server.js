@@ -51,7 +51,12 @@ app.get("/favorites/:userId", (req, res) => {
   });
 });
 
-app.listen(3000, () => console.log("OceanFilm backend avviato su http://localhost:3000"));
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`OceanFilm backend avviato su http://localhost:${PORT}`);
+});
+
 
 app.get("/admin/users", (req, res) => {
   db.all("SELECT id, email FROM users", (err, rows) => {
