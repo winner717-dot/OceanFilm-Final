@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Pannello Admin | OceanFilm</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>⚙️ Pannello Admin</h1>
+  <p>Solo per amministratori autorizzati.</p>
+  <div id="admin-area"></div>
+
+  <script>
+    const isAdmin = prompt("Inserisci email admin:") === "admin@oceanfilm.it";
+
+    if (!isAdmin) {
+      document.body.innerHTML = "<h2>Accesso negato</h2>";
+    } else {
+      Promise.all([
+        fetch("http://localhost:3000/admin/users").then(res => res.json()),
+        fetch("http://localhost:3000/admin/favorites").then(res => res.json())
+      ]).then(([users, favorites]) => {
+        const container = document.getElementById("admin-area");
+
+        container.innerHTML = "<h2>Utenti Registrati</h2>";
+        users.forEach(u => {
+          const userFavs = favorites
+            .filter(f => f.userId === u.id)
+            .map(f => f.tmdbId)
+            .join(", ");
+          container.innerHTML += `
+            <div style="margin-bottom: 10px;">
+              <strong>${u.email}</strong> (ID: ${u.id})<br>
+              Preferiti: ${userFavs || "Nessuno"}
+            </div>
+          `;
+        });
+      });
+    }
+  </script>
+</body>
+</html>

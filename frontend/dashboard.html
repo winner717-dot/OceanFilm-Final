@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | OceanFilm</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>I tuoi preferiti 🌊</h1>
+  <div id="favorites"></div>
+  <script>
+    const userId = localStorage.getItem("userId");
+    fetch(`http://localhost:3000/favorites/${userId}`)
+      .then(res => res.json())
+      .then(async favorites => {
+        const container = document.getElementById("favorites");
+        container.innerHTML = "<p>Caricamento...</p>";
+        const results = await Promise.all(favorites.map(id =>
+          fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=68f19163becdd90a03e3da971aa5825c`).then(r => r.json())
+        ));
+        container.innerHTML = results.map(movie => `
+          <div class="movie">
+            <img src="https://image.tmdb.org/t/p/w200${movie.poster_path}" />
+            <h3>${movie.title}</h3>
+          </div>
+        `).join("");
+      });
+  </script>
+</body>
+</html>

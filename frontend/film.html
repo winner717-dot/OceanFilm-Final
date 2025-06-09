@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>OceanFilm - Guarda Film</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e0f7fa;
+      color: #004d40;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    iframe {
+      display: block;
+      margin: 20px auto;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .info {
+      max-width: 800px;
+      margin: 20px auto;
+    }
+
+    .errore {
+      color: red;
+      text-align: center;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <h1>OceanFilm</h1>
+
+  <div class="info" id="filmInfo">
+    <p>🔄 Caricamento informazioni...</p>
+  </div>
+
+  <h2>Guarda ora:</h2>
+  <iframe id="videoPlayer" width="100%" height="500" allowfullscreen></iframe>
+
+  <h2>Trailer:</h2>
+  <iframe id="trailerFrame" width="100%" height="400" allowfullscreen></iframe>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const tmdbId = urlParams.get('tmdb');
+    const lang = localStorage.getItem('lang') || 'it-IT';
+
+    if (tmdbId) {
+      // Player VixSrc
+      document.getElementById('videoPlayer').src = `https://vixsrc.to/movie/${tmdbId}`;
+
+      // Info film
+      fetch(`https://api.themoviedb.org/3/movie/${tmdbId}?api_key=68f19163becdd90a03e3da971aa5825c&language=${lang}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('filmInfo').innerHTML = `
+            <h2>${data.title}</h2>
+            <p><strong>Trama:</strong> ${data.overview}</p>
+          `;
+        });
+
+      // Trailer
+      fetch(`https://api.themoviedb.org/3/movie/${tmdbId}/videos?api_key=68f19163becdd90a03e3da971aa5825c&language=${lang}`)
+        .then(res => res.json())
+        .then(data => {
+          const trailer = data.results.find(video => video.type === "Trailer" && video.site === "YouTube");
+          if (trailer) {
+            document.getElementById('trailerFrame').src = `https://www.youtube.com/embed/${trailer.key}`;
+          } else {
+            document.getElementById('trailerFrame').outerHTML = '<p class="errore">🎬 Trailer non disponibile.</p>';
+          }
+        });
+    } else {
+      document.getElementById('videoPlayer').outerHTML = '<p class="errore">❌ Nessun film selezionato. Aggiungi ?tmdb=ID all’URL.</p>';
+    }
+  </script>
+</body>
+</html>

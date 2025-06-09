@@ -1,0 +1,29 @@
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(to bottom, #1e3c72, #2a5298);
+  color: #fff;
+  padding: 20px;
+}
+h1, h2 {
+  color: #a3dfff;
+}
+nav a {
+  color: #fff;
+  margin: 0 10px;
+}
+form input, form button {
+  padding: 8px;
+  margin: 5px 0;
+}
+.movie {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+.movie img {
+  width: 100px;
+}
+.movie .info {
+  flex-grow: 1;
+}
